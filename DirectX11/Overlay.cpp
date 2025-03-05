@@ -15,6 +15,7 @@
 //#include "nvapi.h"
 #include "Globals.h"
 #include "profiling.h"
+#include "IniHandler.h"
 
 #include "HackerDevice.h"
 #include "HackerContext.h"
@@ -862,55 +863,50 @@ void ClearNotices()
 
 void LogOverlayW(LogLevel level, wchar_t *fmt, ...)
 {
+	bool debug = GetIniInt(L"Logging", L"debug", 0, NULL);
+	if (!debug) return;
+
 	wchar_t msg[maxstring];
-	va_list ap;
+	va_list ap, ap_copy;
 
 	va_start(ap, fmt);
 	vLogInfoW(fmt, ap);
 
-	// Using _vsnwprintf_s so we don't crash if the message is too long for
-	// the buffer, and truncate it instead - unless we can automatically
-	// wrap the message, which DirectXTK doesn't appear to support, who
-	// cares if it gets cut off somewhere off screen anyway?
-	_vsnwprintf_s(msg, maxstring, _TRUNCATE, fmt, ap);
+	va_copy(ap_copy, ap);
+	_vsnwprintf_s(msg, maxstring, _TRUNCATE, fmt, ap_copy);
+	va_end(ap_copy);
 
 	EnterCriticalSectionPretty(&notices.lock);
-
 	notices.notices[level].emplace_back(msg);
 	has_notice = true;
-
 	LeaveCriticalSection(&notices.lock);
 
 	va_end(ap);
 }
 
-// ASCII version of the above. DirectXTK only understands wide strings, so we
-// need to convert it to that, but we can't just convert the format and hand it
-// to LogOverlayW, because that would reverse the meaning of %s and %S in the
-// format string. Instead we do our own vLogInfo and _vsnprintf_s to handle the
-// format string correctly and convert the result to a wide string.
 void LogOverlay(LogLevel level, char *fmt, ...)
 {
+	bool debug = GetIniInt(L"Logging", L"debug", 0, NULL);
+	if (!debug) return;
+
 	char amsg[maxstring];
 	wchar_t wmsg[maxstring];
-	va_list ap;
+	va_list ap, ap_copy;
 
 	va_start(ap, fmt);
 	vLogInfo(fmt, ap);
 
 	if (!log_levels[level].hide_in_release || G->hunting) {
-		// Using _vsnprintf_s so we don't crash if the message is too long for
-		// the buffer, and truncate it instead - unless we can automatically
-		// wrap the message, which DirectXTK doesn't appear to support, who
-		// cares if it gets cut off somewhere off screen anyway?
-		_vsnprintf_s(amsg, maxstring, _TRUNCATE, fmt, ap);
-		mbstowcs(wmsg, amsg, maxstring);
+		va_copy(ap_copy, ap);
+		_vsnprintf_s(amsg, maxstring, _TRUNCATE, fmt, ap_copy);
+		va_end(ap_copy);
+
+		mbstowcs(wmsg, amsg, maxstring - 1);
+		wmsg[maxstring - 1] = L'\0';
 
 		EnterCriticalSectionPretty(&notices.lock);
-
 		notices.notices[level].emplace_back(wmsg);
 		has_notice = true;
-
 		LeaveCriticalSection(&notices.lock);
 	}
 
