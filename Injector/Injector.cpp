@@ -5,6 +5,7 @@
 #include "Injector.h"
 #include "util_min.h"
 
+#define no_init_all deprecated
 #include <windows.h>
 #include <stdio.h>
 #include <tlhelp32.h>
@@ -107,12 +108,6 @@ static void check_3dmigoto_version(const char *module_path, const char *ini_sect
 	}
 
 	delete [] buf;
-}
-
-static void wait_for_target(const char *target_a, const wchar_t *module_path, bool wait, int delay, bool launched)
-{
-	wchar_t target_w[MAX_PATH];
-	Sleep(6000);
 }
 
 static void elevate_privileges()
@@ -267,12 +262,10 @@ void main()
 
 		ShellExecute(NULL, NULL, setting_w, NULL, working_dir_p, SW_SHOWNORMAL);
 	} else {
-		printf("Stella Mod 3DMigoto is ready");
+		printf("Stella 3DMigoto is ready!");
 	}
 
-	wait_for_target(target, module_full_path,
-			find_ini_bool_lite(ini_section, "wait_for_target", true),
-			find_ini_int_lite(ini_section, "delay", 0), launch);
+	Sleep(7000);
 
 	UnhookWindowsHookEx(hook);
 	delete [] buf;
