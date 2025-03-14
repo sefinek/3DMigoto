@@ -594,7 +594,7 @@
       <AdditionalDependencies>d3d11_x.lib;combase.lib;kernelx.lib;toolhelpx.lib;uuid.lib;</AdditionalDependencies>
       <EntryPointSymbol>
       </EntryPointSymbol>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
@@ -620,7 +620,7 @@
       <AdditionalDependencies>pixEvt.lib;d3d11_x.lib;combase.lib;kernelx.lib;toolhelpx.lib;uuid.lib;</AdditionalDependencies>
       <EntryPointSymbol>
       </EntryPointSymbol>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
@@ -645,7 +645,7 @@
     <Link>
       <AdditionalDependencies>d3d11_x.lib;combase.lib;kernelx.lib;toolhelpx.lib;uuid.lib;</AdditionalDependencies>
       <SubSystem>Windows</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
       <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
     </Link>
     <ClCompile>

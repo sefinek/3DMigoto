@@ -26,7 +26,7 @@
 // The VERSION_MAJOR and VERSION_MINOR are hand edited when versions are to change.
 // The VERSION_REVISION is automatically incremented for every Publish build.
 
-#define VERSION_MAJOR               2
+#define VERSION_MAJOR               3
 #define VERSION_MINOR               0
 #define VERSION_REVISION            0
 
@@ -38,10 +38,10 @@
                                     "." STRINGIZE(VERSION_MINOR)    \
                                     "." STRINGIZE(VERSION_REVISION) \
 
-#define VER_PRODUCTNAME_STR         "3Dmigoto"
+#define VER_PRODUCTNAME_STR         "3DMigoto"
 #define VER_PRODUCT_VERSION         VER_FILE_VERSION
 #define VER_PRODUCT_VERSION_STR     VER_FILE_VERSION_STR
-#define VER_COPYRIGHT_STR           "Copyright (C) 2014-2024 by bo3b, Chiri, Sefinek."
+#define VER_COPYRIGHT_STR           "Copyright (C) 2014-2025 by bo3b, Chiri, Sefinek."
 
 #ifdef _DEBUG
   #define VER_VER_DEBUG             VS_FF_DEBUG
