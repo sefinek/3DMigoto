@@ -249,7 +249,7 @@ static void emit_ini_warning_tone()
 	if (!ini_warned)
 		return;
 	ini_warned = false;
-	// BeepFailure();
+	BeepFailure();
 }
 
 static bool get_namespaced_section_name(const wstring *section, const wstring *ini_namespace, wstring *ret)
@@ -1040,20 +1040,18 @@ static UINT64 GetIniHash(const wchar_t *section, const wchar_t *key, UINT64 def,
 {
 	std::string val;
 	UINT64 ret = def;
+	int len;
 
-	if (found) *found = false;
+	if (found)
+		*found = false;
 
 	if (GetIniString(section, key, NULL, &val)) {
-		if (sscanf_s(val.c_str(), "%16llx", &ret) != 1) {
+		sscanf_s(val.c_str(), "%16llx%n", &ret, &len);
+		if (len != val.length()) {
 			IniWarning("WARNING: Hash parse error: %S=%s\n", key, val.c_str());
-		}
-		else {
-			if (found) *found = true;
-
-			if (wcscmp(key, L"Hash") == 0 && wcsstr(section, L"VertexLimitRaise")) {
-				gi_vb_draw_hashes.insert(ret);
-			}
-
+		} else {
+			if (found)
+				*found = true;
 			LogInfo("  %S=%016llx\n", key, ret);
 		}
 	}
