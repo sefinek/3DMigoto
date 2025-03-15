@@ -249,7 +249,7 @@ static void emit_ini_warning_tone()
 	if (!ini_warned)
 		return;
 	ini_warned = false;
-	BeepFailure();
+	Sleep(150);
 }
 
 static bool get_namespaced_section_name(const wstring *section, const wstring *ini_namespace, wstring *ret)
@@ -1052,6 +1052,10 @@ static UINT64 GetIniHash(const wchar_t *section, const wchar_t *key, UINT64 def,
 		} else {
 			if (found)
 				*found = true;
+
+			if (key == L"Hash" && wcsstr(section, L"VertexLimitRaise") != nullptr) 
+				gi_vb_draw_hashes.insert(ret);
+
 			LogInfo("  %S=%016llx\n", key, ret);
 		}
 	}

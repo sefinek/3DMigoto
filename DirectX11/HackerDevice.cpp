@@ -78,7 +78,7 @@ typedef std::unordered_map<IUnknown *, HackerDevice *> DeviceMap;
 static DeviceMap device_map;
 
 // GI
-std::unordered_set<UINT64> gi_vb_draw_hashes = {
+std::unordered_set<uint64_t> gi_vb_draw_hashes = {
 	3999368768, 3914268842, 2675921, 2269637282, 3381130432, 2265609369,
 	3658145583, 348730234, 3206123287, 4095494095, 1627175614, 2457683658,
 	2334791042, 2037003170, 2060120640, 2769185736, 1444257140, 2930471741,
@@ -2166,8 +2166,8 @@ STDMETHODIMP HackerDevice::CreateBuffer(THIS_
 	// Override custom settings?
 	pNewDesc = process_texture_override(hash, mStereoHandle, pDesc, &newDesc, &oldMode);
 	if (gi_vb_draw_hashes.find(hash) != gi_vb_draw_hashes.end()) {
-		UINT *old_bytewidth = (UINT *)&pNewDesc->ByteWidth;
-		*old_bytewidth = 8800000;
+		newDesc.ByteWidth = 8800000;
+		pNewDesc = &newDesc;
 	}
 
 	HRESULT hr = mOrigDevice1->CreateBuffer(pNewDesc, pInitialData, ppBuffer);
