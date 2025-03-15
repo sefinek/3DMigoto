@@ -1052,7 +1052,6 @@ static UINT64 GetIniHash(const wchar_t *section, const wchar_t *key, UINT64 def,
 		} else {
 			if (found)
 				*found = true;
-
 			if (key == L"Hash" && wcsstr(section, L"VertexLimitRaise") != nullptr) 
 				gi_vb_draw_hashes.insert(ret);
 
