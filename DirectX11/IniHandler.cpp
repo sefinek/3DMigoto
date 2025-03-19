@@ -249,7 +249,7 @@ static void emit_ini_warning_tone()
 	if (!ini_warned)
 		return;
 	ini_warned = false;
-	BeepFailure();
+	Sleep(150);
 }
 
 static bool get_namespaced_section_name(const wstring *section, const wstring *ini_namespace, wstring *ret)
@@ -455,9 +455,6 @@ bool check_include_condition(wstring *val, const wstring *ini_namespace)
 		return false;
 	}
 
-	if (!ret)
-		LogInfo("        condition = false, skipping \"%S\"\n", ini_namespace->c_str());
-
 	return !!ret;
 }
 
@@ -479,6 +476,7 @@ static bool ParseIniPreamble(wstring *wline, wstring *ini_namespace)
 			val = wline->substr(first);
 
 		if (!_wcsicmp(key.c_str(), L"condition")) {
+			LogInfo("        condition = false, skipping \"%S\"\n", ini_namespace->c_str());
 			return check_include_condition(&val, ini_namespace);
 		}
 
@@ -1052,6 +1050,9 @@ static UINT64 GetIniHash(const wchar_t *section, const wchar_t *key, UINT64 def,
 		} else {
 			if (found)
 				*found = true;
+			if (key == L"Hash" && wcsstr(section, L"VertexLimitRaise") != nullptr) 
+				gi_vb_draw_hashes.insert(ret);
+
 			LogInfo("  %S=%016llx\n", key, ret);
 		}
 	}

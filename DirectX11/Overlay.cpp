@@ -15,6 +15,7 @@
 //#include "nvapi.h"
 #include "Globals.h"
 #include "profiling.h"
+#include "IniHandler.h"
 
 #include "HackerDevice.h"
 #include "HackerContext.h"
@@ -124,8 +125,8 @@ Overlay::Overlay(HackerDevice *pDevice, HackerContext *pContext, IDXGISwapChain 
 	// Store app and may not even be called that ourselves.
 	HMODULE handle = NULL;
 	GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS
-			| GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
-			(LPCWSTR)LogOverlay, &handle);
+		| GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
+		(LPCWSTR)LogOverlay, &handle);
 	HRSRC rc = FindResource(handle, MAKEINTRESOURCE(IDR_COURIERBOLD), MAKEINTRESOURCE(SPRITEFONT));
 	HGLOBAL rcData = LoadResource(handle, rc);
 	DWORD fontSize = SizeofResource(handle, rc);
@@ -171,9 +172,9 @@ Overlay::Overlay(HackerDevice *pDevice, HackerContext *pContext, IDXGISwapChain 
 	mEffect->GetVertexShaderBytecode(&shaderByteCode, &byteCodeLength);
 
 	HRESULT hr = mOrigDevice->CreateInputLayout(DirectX::VertexPositionColor::InputElements,
-			DirectX::VertexPositionColor::InputElementCount,
-			shaderByteCode, byteCodeLength,
-			mInputLayout.ReleaseAndGetAddressOf());
+		DirectX::VertexPositionColor::InputElementCount,
+		shaderByteCode, byteCodeLength,
+		mInputLayout.ReleaseAndGetAddressOf());
 	if (FAILED(hr))
 		throw std::runtime_error("CreateInputLayout failed");
 
@@ -385,9 +386,9 @@ static ID3D11Texture2D* get_11on12_backbuffer(ID3D11Device *mOrigDevice, IDXGISw
 	// different barrier altogether, or I haven't considered some subtlty -
 	// let's go with RT->PRESENT for now and see how it goes in practice:
 	hr = d3d11on12_dev->CreateWrappedResource(d3d12_bb, &flags,
-			D3D12_RESOURCE_STATE_RENDER_TARGET, /* in "state" */
-			D3D12_RESOURCE_STATE_PRESENT, /* out "state" */
-			IID_ID3D11Texture2D, (void**)&d3d11_bb);
+		D3D12_RESOURCE_STATE_RENDER_TARGET, /* in "state" */
+		D3D12_RESOURCE_STATE_PRESENT, /* out "state" */
+		IID_ID3D11Texture2D, (void**)&d3d11_bb);
 	LogDebug("  ID3D11Texture2D: %p, result: 0x%x\n", d3d11_bb, hr);
 
 out:
@@ -446,7 +447,7 @@ static void flush_d3d11on12(ID3D11Device *mOrigDevice, ID3D11DeviceContext *mOri
 // For two games we know of (Batman Arkham Knight and Project Cars) we were not
 // getting an overlay, because apparently the rendertarget was left in an odd
 // state.  This adds an init to be certain that the rendertarget is the backbuffer
-// so that the overlay is drawn. 
+// so that the overlay is drawn.
 
 HRESULT Overlay::InitDrawState()
 {
@@ -498,7 +499,7 @@ HRESULT Overlay::InitDrawState()
 
 void Overlay::DrawRectangle(float x, float y, float w, float h, float r, float g, float b, float opacity)
 {
-	DirectX::XMVECTORF32 colour = {r, g, b, opacity};
+	DirectX::XMVECTORF32 colour = { r, g, b, opacity };
 
 	mOrigContext->OMSetBlendState(mStates->AlphaBlend(), nullptr, 0xFFFFFFFF);
 	mOrigContext->OMSetDepthStencilState(mStates->DepthNone(), 0);
@@ -517,10 +518,10 @@ void Overlay::DrawRectangle(float x, float y, float w, float h, float r, float g
 	mPrimitiveBatch->Begin();
 
 	// DirectXTK is using 0,1,2 0,2,3, so layout the vectors clockwise:
-	DirectX::VertexPositionColor v1(Vector3(x  , y  , 0), colour);
-	DirectX::VertexPositionColor v2(Vector3(x+w, y  , 0), colour);
-	DirectX::VertexPositionColor v3(Vector3(x+w, y+h, 0), colour);
-	DirectX::VertexPositionColor v4(Vector3(x  , y+h, 0), colour);
+	DirectX::VertexPositionColor v1(Vector3(x, y, 0), colour);
+	DirectX::VertexPositionColor v2(Vector3(x + w, y, 0), colour);
+	DirectX::VertexPositionColor v3(Vector3(x + w, y + h, 0), colour);
+	DirectX::VertexPositionColor v4(Vector3(x, y + h, 0), colour);
 
 	mPrimitiveBatch->DrawQuad(v1, v2, v3, v4);
 
@@ -530,16 +531,16 @@ void Overlay::DrawRectangle(float x, float y, float w, float h, float r, float g
 void Overlay::DrawOutlinedString(DirectX::SpriteFont *font, wchar_t const *text, DirectX::XMFLOAT2 const &position, DirectX::FXMVECTOR color)
 {
 	font->DrawString(mSpriteBatch.get(), text, position + Vector2(-1, 0), DirectX::Colors::Black);
-	font->DrawString(mSpriteBatch.get(), text, position + Vector2( 1, 0), DirectX::Colors::Black);
-	font->DrawString(mSpriteBatch.get(), text, position + Vector2( 0,-1), DirectX::Colors::Black);
-	font->DrawString(mSpriteBatch.get(), text, position + Vector2( 0, 1), DirectX::Colors::Black);
+	font->DrawString(mSpriteBatch.get(), text, position + Vector2(1, 0), DirectX::Colors::Black);
+	font->DrawString(mSpriteBatch.get(), text, position + Vector2(0, -1), DirectX::Colors::Black);
+	font->DrawString(mSpriteBatch.get(), text, position + Vector2(0, 1), DirectX::Colors::Black);
 	font->DrawString(mSpriteBatch.get(), text, position, color);
 }
 
 // -----------------------------------------------------------------------------
 
-// The active shader will show where we are in each list. / 0 / 0 will mean that we are not 
-// actively searching. 
+// The active shader will show where we are in each list. / 0 / 0 will mean that we are not
+// actively searching.
 
 static void AppendShaderText(wchar_t *fullLine, wchar_t *type, int pos, size_t size)
 {
@@ -744,7 +745,7 @@ void Overlay::DrawProfiling(float *y)
 }
 
 // Create a string for display on the bottom edge of the screen, that contains the current
-// stereo info of separation and convergence. 
+// stereo info of separation and convergence.
 // Desired format: "Sep:85  Conv:4.5"
 
 static void CreateStereoInfoString(StereoHandle stereoHandle, wchar_t *info)
@@ -788,7 +789,7 @@ void Overlay::DrawOverlay(void)
 
 	// Since some games did not like having us change their drawing state from
 	// SpriteBatch, we now save and restore all state information for the GPU
-	// around our drawing.  
+	// around our drawing.
 	SaveState();
 	{
 		hr = InitDrawState();
@@ -862,6 +863,8 @@ void ClearNotices()
 
 void LogOverlayW(LogLevel level, wchar_t *fmt, ...)
 {
+	if (!GetIniInt(L"Logging", L"show_warnings", 0, NULL)) return;
+
 	wchar_t msg[maxstring];
 	va_list ap;
 
@@ -891,6 +894,8 @@ void LogOverlayW(LogLevel level, wchar_t *fmt, ...)
 // format string correctly and convert the result to a wide string.
 void LogOverlay(LogLevel level, char *fmt, ...)
 {
+	if (!GetIniInt(L"Logging", L"show_warnings", 0, NULL)) return;
+
 	char amsg[maxstring];
 	wchar_t wmsg[maxstring];
 	va_list ap;

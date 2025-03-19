@@ -14,14 +14,14 @@
 //#include <set>
 //#include <iterator>
 //#include <string>
-//
+
 //#include "util.h"
 //#include "Override.h"
 //#include "HackerDevice.h"
 //#include "HackerContext.h"
 
 // The Log file and the Globals are both used globally, and these are the actual
-// definitions of the variables.  All other uses will be via the extern in the 
+// definitions of the variables.  All other uses will be via the extern in the
 // globals.h and log.h files.
 
 // Globals used to be allocated on the heap, which is pointless given that it
@@ -46,45 +46,6 @@ bool gLogDebug = false;
 // CreateXXX call.
 CRITICAL_SECTION resource_creation_mode_lock;
 
-// This function checks if 3DMigoto is running in the intended executable - it
-// is similar to verify_intended_target() that we use in DllMain to bail out of
-// unwanted executables when using the 3DMigoto loader, and uses the same
-// [Loader]target ini setting (because adding a second setting would be
-// confusing). But in this case we could be loaded from the game directory so
-// we can't simply unload outselves and still need to pass d3d11.dll exported
-// functions through to the original. We just will skip wrapping/hooking the
-// device/context or intercepting the swap chain.
-static bool verify_intended_target_late()
-{
-	wchar_t exe_path[MAX_PATH];
-	wchar_t target[MAX_PATH];
-	size_t target_len, exe_len;
-
-	if (!GetIniBool(L"Loader", L"check_target_even_without_loader", false, NULL))
-		return true;
-
-	if (GetIniString(L"Loader", L"Target", NULL, target, MAX_PATH) == 0)
-		return true;
-
-	if (!GetModuleFileName(NULL, exe_path, MAX_PATH))
-		return false;
-
-	// If we are loading into an application with a generic name like
-	// "game.exe" we may want to check part of the directory structure as well,
-	// so we will do the comparison using the end of the full executable path.
-	target_len = wcslen(target);
-	exe_len = wcslen(exe_path);
-	if (exe_len < target_len)
-		return false;
-
-	// Unless we are matching a full path we do expect the match be immediately
-	// following a directory separator, even if this was not explicitly stated
-	// in the target string:
-	if (target[0] != L'\\' && exe_len > target_len && exe_path[exe_len - target_len - 1] != L'\\')
-		return false;
-
-	return !_wcsicmp(exe_path + exe_len - target_len, target);
-}
 
 // During the initialize, we will also Log every setting that is enabled, so that the log
 // has a complete list of active settings.  This should make it more accurate and clear.
@@ -96,12 +57,6 @@ static bool InitializeDLL()
 
 	LoadConfigFile();
 
-
-	G->bIntendedTargetExe = verify_intended_target_late();
-	if (!G->bIntendedTargetExe) {
-		LogInfo("Executable does not match [Loader]Target setting, disabling core functionality\n");
-		return false;
-	}
 
 	// Preload OUR nvapi before we call init because we need some of our calls.
 #if(_WIN64)
@@ -159,7 +114,7 @@ static bool InitializeDLL()
 	//	return false;
 	//}
 
-	// If we are going to use 3D Vision Direct Mode, we need to set the driver 
+	// If we are going to use 3D Vision Direct Mode, we need to set the driver
 	// into that mode early, before any possible CreateDevice occurs.
 	if (G->gForceStereo == 2)
 	{
@@ -535,24 +490,6 @@ void InitD311()
 #endif
 }
 
-HRESULT WINAPI D3D11On12CreateDevice(
-	_In_ IUnknown* pDevice,
-	UINT Flags,
-	_In_reads_opt_(FeatureLevels) CONST D3D_FEATURE_LEVEL* pFeatureLevels,
-	UINT FeatureLevels,
-	_In_reads_opt_(NumQueues) IUnknown* CONST* ppCommandQueues,
-	UINT NumQueues,
-	UINT NodeMask,
-	_COM_Outptr_opt_ ID3D11Device** ppDevice,
-	_COM_Outptr_opt_ ID3D11DeviceContext** ppImmediateContext,
-	_Out_opt_ D3D_FEATURE_LEVEL* pChosenFeatureLevel)
-{
-	InitD311();
-	LogInfo("D3D11On12CreateDevice called.\n");
-
-	return (*_D3D11On12CreateDevice)(pDevice, Flags, pFeatureLevels, FeatureLevels, ppCommandQueues, NumQueues, NodeMask, ppDevice, ppImmediateContext, pChosenFeatureLevel);
-}
-
 int WINAPI D3DKMTQueryAdapterInfo(_D3DKMT_QUERYADAPTERINFO *info)
 {
 	InitD311();
@@ -846,12 +783,12 @@ static HackerDevice* wrap_d3d11_device_and_context(ID3D11Device **ppDevice, ID3D
 // For creating the device, we need to call the original D3D11CreateDevice in order to initialize
 // Direct3D, and collect the original Device and original Context.  Both of those will be handed
 // off to the wrapped HackerDevice and HackerContext objects, so they can call out to the originals
-// as needed.  Both Hacker objects need access to both Context and Device, so since both are 
+// as needed.  Both Hacker objects need access to both Context and Device, so since both are
 // created here, it's easy enough to provide them upon instantiation.
 //
 // Now intended to be fully null safe- as games seem to have a lot of variance.
 //
-// 1-8-18: Switching tacks to always return ID3D11Device1 objects, which are the 
+// 1-8-18: Switching tacks to always return ID3D11Device1 objects, which are the
 // platform_update required type.  Since it's a superset, we can in general just
 // the reference as a normal ID3D11Device.
 // In the no platform_update case, the mOrigDevice1 will actually be an ID3D11Device.
@@ -913,14 +850,6 @@ HRESULT WINAPI D3D11CreateDevice(
 	LogInfo("    ppDevice = %p\n", ppDevice);
 	LogInfo("    pFeatureLevel = %#x\n", pFeatureLevel ? *pFeatureLevel : 0);
 	LogInfo("    ppImmediateContext = %p\n", ppImmediateContext);
-
-	if (!G->bIntendedTargetExe) {
-		LogInfo("   Not intended target exe, passing through to real DX\n");
-		return _D3D11CreateDevice(pAdapter, DriverType, Software,
-			Flags, pFeatureLevels, FeatureLevels,
-			SDKVersion, ppDevice, pFeatureLevel,
-			ppImmediateContext);
-	}
 
 	if (ForceDX11(const_cast<D3D_FEATURE_LEVEL*>(pFeatureLevels)))
 		return E_INVALIDARG;
@@ -1037,14 +966,6 @@ HRESULT WINAPI D3D11CreateDeviceAndSwapChain(
 	LogInfo("    ppDevice = %p\n", ppDevice);
 	LogInfo("    pFeatureLevel = %#x\n", pFeatureLevel ? *pFeatureLevel: 0);
 	LogInfo("    ppImmediateContext = %p\n", ppImmediateContext);
-
-	if (!G->bIntendedTargetExe) {
-		LogInfo("   Not intended target exe, passing through to real DX\n");
-		return _D3D11CreateDeviceAndSwapChain(pAdapter, DriverType,
-			Software, Flags, pFeatureLevels, FeatureLevels,
-			SDKVersion, pSwapChainDesc, ppSwapChain,
-			ppDevice, pFeatureLevel, ppImmediateContext);
-	}
 
 	if (ForceDX11(const_cast<D3D_FEATURE_LEVEL*>(pFeatureLevels)))
 		return E_INVALIDARG;

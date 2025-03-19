@@ -1,33 +1,33 @@
 <html>
 <head>
-<title>pcre2_config specification</title>
+    <title>pcre2_config specification</title>
 </head>
-<body bgcolor="#FFFFFF" text="#00005A" link="#0066FF" alink="#3399FF" vlink="#2222BB">
+<body alink="#3399FF" bgcolor="#FFFFFF" link="#0066FF" text="#00005A" vlink="#2222BB">
 <h1>pcre2_config man page</h1>
 <p>
-Return to the <a href="index.html">PCRE2 index page</a>.
+    Return to the <a href="index.html">PCRE2 index page</a>.
 </p>
 <p>
-This page is part of the PCRE2 HTML documentation. It was generated
-automatically from the original man page. If there is any nonsense in it,
-please consult the man page, in case the conversion went wrong.
-<br>
-<br><b>
-SYNOPSIS
+    This page is part of the PCRE2 HTML documentation. It was generated
+    automatically from the original man page. If there is any nonsense in it,
+    please consult the man page, in case the conversion went wrong.
+    <br>
+    <br><b>
+    SYNOPSIS
 </b><br>
 <P>
-<b>#include &#60;pcre2.h&#62;</b>
+    <b>#include &#60;pcre2.h&#62;</b>
 </P>
 <P>
-<b>int pcre2_config(uint32_t <i>what</i>, void *<i>where</i>);</b>
+    <b>int pcre2_config(uint32_t <i>what</i>, void *<i>where</i>);</b>
 </P>
 <br><b>
-DESCRIPTION
+    DESCRIPTION
 </b><br>
 <P>
-This function makes it possible for a client program to find out which optional
-features are available in the version of the PCRE2 library it is using. The
-arguments are as follows:
+    This function makes it possible for a client program to find out which optional
+    features are available in the version of the PCRE2 library it is using. The
+    arguments are as follows:
 <pre>
   <i>what</i>     A code specifying what information is required
   <i>where</i>    Points to where to put the information
@@ -37,10 +37,10 @@ the requested information. When the information is a string, the value is in
 code units; for other types of data it is in bytes.
 </P>
 <P>
-If <b>where</b> is not NULL, for PCRE2_CONFIG_JITTARGET,
-PCRE2_CONFIG_UNICODE_VERSION, and PCRE2_CONFIG_VERSION it must point to a
-buffer that is large enough to hold the string. For all other codes it must
-point to a uint32_t integer variable. The available codes are:
+    If <b>where</b> is not NULL, for PCRE2_CONFIG_JITTARGET,
+    PCRE2_CONFIG_UNICODE_VERSION, and PCRE2_CONFIG_VERSION it must point to a
+    buffer that is large enough to hold the string. For all other codes it must
+    point to a uint32_t integer variable. The available codes are:
 <pre>
   PCRE2_CONFIG_BSR             Indicates what \R matches by default:
                                  PCRE2_BSR_UNICODE
@@ -72,11 +72,11 @@ requested, the function returns the number of code units used, including the
 terminating zero.
 </P>
 <P>
-There is a complete description of the PCRE2 native API in the
-<a href="pcre2api.html"><b>pcre2api</b></a>
-page and a description of the POSIX API in the
-<a href="pcre2posix.html"><b>pcre2posix</b></a>
-page.
+    There is a complete description of the PCRE2 native API in the
+    <a href="pcre2api.html"><b>pcre2api</b></a>
+    page and a description of the POSIX API in the
+    <a href="pcre2posix.html"><b>pcre2posix</b></a>
+    page.
 <p>
-Return to the <a href="index.html">PCRE2 index page</a>.
+    Return to the <a href="index.html">PCRE2 index page</a>.
 </p>
