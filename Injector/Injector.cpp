@@ -5,7 +5,6 @@
 #include "Injector.h"
 #include "util_min.h"
 
-#define no_init_all deprecated
 #include <windows.h>
 #include <stdio.h>
 #include <tlhelp32.h>
