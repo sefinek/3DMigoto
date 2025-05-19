@@ -12,12 +12,11 @@ bugs, adding new features, or documenting how to use it.
 The current project is set up using Visual Studio 2017 Community, so anyone can do development for free.
 
 ### To get started do:
-
 1. Install IE 10 or 11. VS2017 apparently requires this, but might have been fixed recently.
 2. Download VS2017 Community for Windows Desktop.
 3. Install VS2017 and be sure to select:
-    - Programming Languages -> Visual C++
-    - Windows 11 SDK (10.0.22621.0)
+   - Programming Languages -> Visual C++
+   - Windows 11 SDK (10.0.26100.0)
 4. Run VS2017.
 5. TEAM menu, Connect. Opens the Connect page for cloning.
 6. Use Clone menu, and enter the repository:
@@ -30,5 +29,4 @@ The current project is set up using Visual Studio 2017 Community, so anyone can 
 12. Output files are in .\x64\Debug (3 dll and 1 .ini)
 
 ### If you have any questions or problems don't hesitate to contact me.
-
 Big, big, _impossibly_ big thanks to Chiri for open-sourcing 3DMigoto.
