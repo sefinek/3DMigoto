@@ -261,19 +261,29 @@ void check_3dmigoto_version(const char *module_path, const char *ini_section) {
 
 	buf = new char[size];
 
-	if (!GetFileVersionInfoA(module_path, pointless_handle, size, buf)) wait_exit(EXIT_FAILURE, "3DMigoto version info check failed\n");
+	if (!GetFileVersionInfoA(module_path, pointless_handle, size, buf))
+		wait_exit(EXIT_FAILURE, "3DMigoto version info check failed\n");
 
 	if (!check_file_description(buf, module_path)) {
-		printf("ERROR: The requested module \"%s\" is not 3DMigoto\n" "Please ensure that [Loader] \"module\" is set correctly and the DLL is in place.", module_path);
+		printf("ERROR: The requested module \"%s\" is not 3DMigoto\n"
+		       "Please ensure that [Loader] \"module\" is set correctly and the DLL is in place.", module_path);
 		wait_exit(EXIT_FAILURE);
 	}
 
-	if (!VerQueryValueA(buf, "\\", (void**)&query, &size)) wait_exit(EXIT_FAILURE, "3DMigoto version query check failed\n");
+	if (!VerQueryValueA(buf, "\\", (void**)&query, &size))
+		wait_exit(EXIT_FAILURE, "3DMigoto version query check failed\n");
 
-	printf("Version: %d.%d.%d\n", query->dwProductVersionMS >> 16, query->dwProductVersionMS & 0xffff, query->dwProductVersionLS >> 16);
+	DWORD major  = query->dwProductVersionMS >> 16;
+	DWORD minor  = query->dwProductVersionMS & 0xFFFF;
+	DWORD patch  = query->dwProductVersionLS >> 16;
+	DWORD build  = query->dwProductVersionLS & 0xFFFF;
+	printf("Version: %d.%d.%d.%d\n", major, minor, patch, build);
 
-	if (query->dwProductVersionMS < 0x00030000) {
-		wait_exit(EXIT_FAILURE, "This version of 3DMigoto is too old to be safely loaded - please use 3.0.0 or later!\n");
+	if ((major < 3) ||
+	    (major == 3 && minor < 0) ||
+	    (major == 3 && minor == 0 && patch < 0) ||
+	    (major == 3 && minor == 0 && patch == 0 && build <= 0)) {
+		wait_exit(EXIT_FAILURE, "This version of 3DMigoto is too old to be safely loaded - please use a version newer than 3.0.0.0!\n");
 	}
 
 	delete[] buf;
