@@ -1,0 +1,71 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Win32" />
+    <Platform Name="x64" />
+  </Configurations>
+  <Folder Name="/Dependencies/">
+    <File Path="Dependencies/d3dx.ini" />
+  </Folder>
+  <Folder Name="/Dependencies/Nektra/">
+    <File Path="Nektra/NktHookLib.h" />
+    <File Path="Nektra/NktHookLib.lib" />
+    <File Path="Nektra/nkthooklib.pdb" />
+    <File Path="Nektra/NktHookLib64.lib" />
+    <File Path="Nektra/nkthooklib64.pdb" />
+    <File Path="Nektra/NktHookLib64_Debug.lib" />
+    <File Path="Nektra/nkthooklib64_debug.pdb" />
+    <File Path="Nektra/NktHookLib_Debug.lib" />
+    <File Path="Nektra/nkthooklib_debug.pdb" />
+  </Folder>
+  <Folder Name="/pcre2/">
+    <File Path="pcre2/pcre2-32.lib" />
+    <File Path="pcre2/pcre2-32d.lib" />
+    <File Path="pcre2/pcre2-64.lib" />
+    <File Path="pcre2/pcre2-64d.lib" />
+    <File Path="pcre2/pcre2.h" />
+  </Folder>
+  <Folder Name="/Solution Items/" />
+  <Project Path="BinaryDecompiler/BinaryDecompiler.vcxproj" Id="258d0ad2-b762-41e3-a0c1-cf831d859da4" />
+  <Project Path="D3DCompiler_39/D3DCompiler_39.vcxproj" Id="3d750839-c456-4374-9c21-bf596576d8ff">
+    <Build Project="false" />
+  </Project>
+  <Project Path="D3DCompiler_41/D3DCompiler_41.vcxproj" Id="eb4987cd-cfee-455a-b678-6d398f0da30a">
+    <Build Project="false" />
+  </Project>
+  <Project Path="D3DCompiler_42/D3DCompiler_42.vcxproj" Id="6b6a1ef6-cded-4bc9-b32d-8c0ab051f620">
+    <Build Project="false" />
+  </Project>
+  <Project Path="D3DCompiler_43/D3DCompiler_43.vcxproj" Id="d831cd64-e2af-4ceb-97bb-5946f829a40b">
+    <Build Project="false" />
+  </Project>
+  <Project Path="D3DCompiler_46/D3DCompiler_46.vcxproj" Id="0783ce5a-6b8f-4e16-a26f-04f9f21ad078">
+    <Build Project="false" />
+  </Project>
+  <Project Path="D3D_Shaders/D3D_Shaders.vcxproj" Id="59a9b0c6-8302-48a9-96e0-126fb32fb9ed">
+    <Build Project="false" />
+  </Project>
+  <Project Path="DirectX10/DirectX10.vcxproj" Id="c9205dc6-7ce4-4939-9efc-fe61483cce01">
+    <Build Project="false" />
+  </Project>
+  <Project Path="DirectX11/DirectX11.vcxproj" Id="92a679c7-a67f-4b16-b055-7a2f4c23dd80">
+    <BuildDependency Project="BinaryDecompiler/BinaryDecompiler.vcxproj" />
+    <BuildDependency Project="D3D_Shaders/D3D_Shaders.vcxproj" />
+    <BuildDependency Project="DirectXTK/DirectXTK_Desktop_2017.vcxproj" />
+    <BuildDependency Project="NVAPI/NVAPI.vcxproj" />
+  </Project>
+  <Project Path="DirectX9/DirectX9.vcxproj" Id="4265c0d8-8671-49c0-8eb5-eb940fd08482">
+    <BuildDependency Project="NVAPI/NVAPI.vcxproj" />
+    <Build Project="false" />
+  </Project>
+  <Project Path="DirectXGI/DirectXGI.vcxproj" Id="16459e48-9cd1-49fe-8703-d8b275cfce1e">
+    <Build Project="false" />
+  </Project>
+  <Project Path="DirectXTK/DirectXTK_Desktop_2017.vcxproj" Id="e0b52ae7-e160-4d32-bf3f-910b785e5a8e" />
+  <Project Path="HLSLDecompiler/cmd_Decompiler/cmd_Decompiler.vcxproj" Id="25e1f732-dcf5-428e-928d-d39c499cc95f">
+    <Build Solution="Release|*" Project="false" />
+  </Project>
+  <Project Path="Injector/Injector.vcxproj" Id="8747d291-5845-4743-b3ed-fb418fccc817" />
+  <Project Path="NVAPI/NVAPI.vcxproj" Id="374cbd29-e904-48e5-bf6f-a464b1edca86">
+    <BuildDependency Project="DirectXTK/DirectXTK_Desktop_2017.vcxproj" />
+  </Project>
+</Solution>
